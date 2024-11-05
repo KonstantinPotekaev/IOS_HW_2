@@ -11,6 +11,7 @@ final class WishMakerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
+        configureAddWishButton()
     }
     
     private func configureUI() {
@@ -74,7 +75,7 @@ final class WishMakerViewController: UIViewController {
             slidersContainer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             slidersContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             slidersContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            slidersContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30)
+            slidersContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -100)
         ])
         
         // Констрейнты для стека внутри контейнера, чтобы адаптировать высоту контейнера
@@ -118,4 +119,35 @@ final class WishMakerViewController: UIViewController {
     @objc private func toggleSlidersVisibility() {
         slidersContainer.isHidden.toggle()
     }
+    
+    private let addWishButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Write Down a Wish", for: .normal)
+        button.setTitleColor(.systemPink, for: .normal)
+        button.backgroundColor = .white
+        button.layer.cornerRadius = 8
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
+    private func configureAddWishButton() {
+        view.addSubview(addWishButton)
+        addWishButton.addTarget(self, action: #selector(addWishButtonPressed), for: .touchUpInside)
+        
+        NSLayoutConstraint.activate([
+            addWishButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            addWishButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            addWishButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            addWishButton.heightAnchor.constraint(equalToConstant: 50)
+        ])
+    }
+
+    @objc private func addWishButtonPressed() {
+        let wishStoringVC = WishStoringViewController()
+        let navController = UINavigationController(rootViewController: wishStoringVC)
+        present(navController, animated: true)
+    }
+    
+    
+
 }
