@@ -40,10 +40,19 @@ final class WishEventCell: UICollectionViewCell {
     }
     
     func configure(with model: WishEventModel) {
-        titleLabel.text = model.title
-        descriptionLabel.text = model.description
-        dateLabel.text = "\(model.startDate) - \(model.endDate)"
-    }
+            titleLabel.text = model.title
+            descriptionLabel.text = model.description
+
+            // Форматируем дату
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium
+            formatter.timeStyle = .short
+
+            let formattedStartDate = formatter.string(from: model.startDate)
+            let formattedEndDate = formatter.string(from: model.endDate)
+            
+            dateLabel.text = "\(formattedStartDate) - \(formattedEndDate)"
+        }
     
     func addSwipeAction(_ action: @escaping () -> Void) {
         deleteAction = action

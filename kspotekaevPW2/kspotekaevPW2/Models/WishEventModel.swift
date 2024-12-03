@@ -5,4 +5,5 @@ struct WishEventModel: Codable {
     let description: String
     let startDate: Date
     let endDate: Date
+    var eventIdentifier: String?
 }

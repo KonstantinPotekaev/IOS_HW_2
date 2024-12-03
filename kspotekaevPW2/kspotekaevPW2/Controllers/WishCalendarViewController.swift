@@ -52,12 +52,6 @@ final class WishCalendarViewController: UIViewController {
         )
     }
     
-    @objc private func addEventTapped() {
-        let eventVC = WishEventCreationView()
-        eventVC.delegate = self
-        present(eventVC, animated: true)
-    }
-    
     // MARK: - UserDefaults Management
     private func saveEvents() {
         let encoder = JSONEncoder()
@@ -76,9 +70,50 @@ final class WishCalendarViewController: UIViewController {
     
     // MARK: - Delete Event
     private func deleteEvent(at indexPath: IndexPath) {
-        events.remove(at: indexPath.item) // Удаляем событие из массива
-        collectionView.deleteItems(at: [indexPath]) // Обновляем коллекцию
+        // Убедимся, что индекс существует в массиве
+        guard indexPath.item < events.count else {
+            print("Index out of range")
+            return
+        }
+
+        // Сохраняем идентификатор события перед удалением из массива
+        let event = events[indexPath.item]
+        let identifierToDelete = event.eventIdentifier
+        
+        // Удаляем элемент из массива и обновляем коллекцию
+        collectionView.performBatchUpdates({
+            events.remove(at: indexPath.item)
+            collectionView.deleteItems(at: [indexPath])
+        }, completion: nil)
+
+        // Выполняем удаление из календаря после синхронизации массива и коллекции
+        if let identifier = identifierToDelete {
+            let calendarManager = CalendarManager()
+            calendarManager.requestAccess { granted in
+                guard granted else {
+                    print("Access to calendar denied")
+                    return
+                }
+                calendarManager.deleteEvent(with: identifier) { success in
+                    if success {
+                        print("Event removed from calendar")
+                    } else {
+                        print("Failed to remove event from calendar")
+                    }
+                }
+            }
+        }
     }
+
+
+    
+    var preselectedWish: String?
+    @objc private func addEventTapped() {
+           let eventVC = WishEventCreationView()
+           eventVC.preselectedWish = preselectedWish
+           eventVC.delegate = self
+           present(eventVC, animated: true)
+       }
 }
 
 // MARK: - WishEventCreationDelegate
