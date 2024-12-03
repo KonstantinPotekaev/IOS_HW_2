@@ -14,7 +14,7 @@
 		898EC5DE2CD0C8CF00E14597 /* Exceptions for "kspotekaevPW2" folder in "kspotekaevPW2" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				Resources/Info.plist,
 			);
 			target = 898EC5CB2CD0C8CE00E14597 /* kspotekaevPW2 */;
 		};
@@ -147,7 +147,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 23875DS323;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = kspotekaevPW2/Info.plist;
+				INFOPLIST_FILE = kspotekaevPW2/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -175,7 +175,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 23875DS323;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = kspotekaevPW2/Info.plist;
+				INFOPLIST_FILE = kspotekaevPW2/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
