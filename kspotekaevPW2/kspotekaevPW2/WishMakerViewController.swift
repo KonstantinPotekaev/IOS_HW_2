@@ -1,5 +1,18 @@
 import UIKit
 
+extension UIColor {
+    var inverted: UIColor {
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+
+        self.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+
+        return UIColor(red: 1 - red, green: 1 - green, blue: 1 - blue, alpha: alpha)
+    }
+}
+
 final class WishMakerViewController: UIViewController {
     
     private let sliderRed = CustomSlider(title: "Red", min: 0, max: 1)
@@ -8,10 +21,40 @@ final class WishMakerViewController: UIViewController {
     
     private let slidersContainer = UIView()
 
+    private let addWishButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Write Down a Wish", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = .systemBlue
+        button.layer.cornerRadius = 8
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    private let toggleButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Toggle Sliders", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = .systemGray
+        button.layer.cornerRadius = 8
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    private let scheduleWishesButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Schedule Wish", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = .systemBlue
+        button.layer.cornerRadius = 8
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
-        configureAddWishButton()
+        configureActionStack()
     }
     
     private func configureUI() {
@@ -51,7 +94,6 @@ final class WishMakerViewController: UIViewController {
     }
 
     private func configureSlidersContainer() {
-        // Настройка контейнера для слайдеров
         slidersContainer.backgroundColor = .white
         slidersContainer.layer.cornerRadius = 15
         slidersContainer.layer.shadowColor = UIColor.black.cgColor
@@ -61,7 +103,6 @@ final class WishMakerViewController: UIViewController {
         slidersContainer.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(slidersContainer)
         
-        // Добавляем стек в контейнер
         let stack = UIStackView(arrangedSubviews: [sliderRed, sliderGreen, sliderBlue])
         stack.axis = .vertical
         stack.alignment = .fill
@@ -70,7 +111,6 @@ final class WishMakerViewController: UIViewController {
         stack.translatesAutoresizingMaskIntoConstraints = false
         slidersContainer.addSubview(stack)
         
-        // Констрейнты для контейнера, чтобы он располагался внизу экрана
         NSLayoutConstraint.activate([
             slidersContainer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             slidersContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
@@ -78,7 +118,6 @@ final class WishMakerViewController: UIViewController {
             slidersContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -100)
         ])
         
-        // Констрейнты для стека внутри контейнера, чтобы адаптировать высоту контейнера
         NSLayoutConstraint.activate([
             stack.topAnchor.constraint(equalTo: slidersContainer.topAnchor, constant: 20),
             stack.leadingAnchor.constraint(equalTo: slidersContainer.leadingAnchor, constant: 20),
@@ -86,7 +125,6 @@ final class WishMakerViewController: UIViewController {
             stack.bottomAnchor.constraint(equalTo: slidersContainer.bottomAnchor, constant: -20)
         ])
         
-        // Установка действия для изменения цвета
         sliderRed.valueChanged = { [weak self] _ in self?.updateBackgroundColor() }
         sliderGreen.valueChanged = { [weak self] _ in self?.updateBackgroundColor() }
         sliderBlue.valueChanged = { [weak self] _ in self?.updateBackgroundColor() }
@@ -97,14 +135,14 @@ final class WishMakerViewController: UIViewController {
         let green = CGFloat(sliderGreen.value)
         let blue = CGFloat(sliderBlue.value)
         view.backgroundColor = UIColor(red: red, green: green, blue: blue, alpha: 1.0)
+        updateButtonColors()
     }
     
-    private let toggleButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Toggle Sliders", for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
+    private func updateButtonColors() {
+        let invertedColor = view.backgroundColor?.inverted ?? .white
+        addWishButton.setTitleColor(invertedColor, for: .normal)
+        scheduleWishesButton.setTitleColor(invertedColor, for: .normal)
+    }
     
     private func configureToggleButton() {
         view.addSubview(toggleButton)
@@ -120,26 +158,22 @@ final class WishMakerViewController: UIViewController {
         slidersContainer.isHidden.toggle()
     }
     
-    private let addWishButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Write Down a Wish", for: .normal)
-        button.setTitleColor(.systemPink, for: .normal)
-        button.backgroundColor = .white
-        button.layer.cornerRadius = 8
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-
-    private func configureAddWishButton() {
-        view.addSubview(addWishButton)
-        addWishButton.addTarget(self, action: #selector(addWishButtonPressed), for: .touchUpInside)
+    private func configureActionStack() {
+        let actionStack = UIStackView(arrangedSubviews: [addWishButton, scheduleWishesButton])
+        actionStack.axis = .vertical
+        actionStack.spacing = 10
+        actionStack.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(actionStack)
         
         NSLayoutConstraint.activate([
-            addWishButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            addWishButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            addWishButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
-            addWishButton.heightAnchor.constraint(equalToConstant: 50)
+            actionStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            actionStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            actionStack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
         ])
+        
+        addWishButton.addTarget(self, action: #selector(addWishButtonPressed), for: .touchUpInside)
+        scheduleWishesButton.addTarget(self, action: #selector(scheduleWishesTapped), for: .touchUpInside)
     }
 
     @objc private func addWishButtonPressed() {
@@ -148,6 +182,9 @@ final class WishMakerViewController: UIViewController {
         present(navController, animated: true)
     }
     
-    
-
+    @objc private func scheduleWishesTapped() {
+        let calendarVC = WishCalendarViewController()
+        calendarVC.view.backgroundColor = view.backgroundColor
+        navigationController?.pushViewController(calendarVC, animated: true)
+    }
 }
